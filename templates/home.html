@@ -1,0 +1,36 @@
+{%extends "base.html"%}
+{%block title%}Duck Careers - Find Your Dream Job{%endblock%}
+
+{%block content%}
+<img src="/static/banner.jpg" alt="Duck Careers Banner" class="top-banner">
+
+<div class="main-content">
+    <h1>Duck Careers!</h1>
+    
+    <div class="about-section">
+        <h2>About Duck Careers</h2>
+        <p>Duck Careers is your premier destination for navigating the job market with confidence and ease. Whether you're a recent graduate taking your first professional steps or an experienced professional seeking new opportunities, our platform connects you with thousands of employers across diverse industries. We offer personalized job recommendations, comprehensive career resources, and expert guidance to help you land your dream role. Our intuitive search tools and advanced filtering options make finding the perfect position simple and efficient. Join our community of ambitious professionals and let Duck Careers guide you toward a fulfilling and successful career path. Your next opportunity awaits.</p>
+    </div>
+
+    <h2 class="text-center">Open Positions</h2>
+
+    <div class="container">
+    {% for job in jobs %}
+        <div class="job-card">
+            <h3>{{ job.title }}</h3>
+            <p>{{ job.company }}</p>
+            <p><strong>Location:</strong> {{ job.location }}</p>
+            <p><strong>Salary:</strong> {{ job.salary }}</p>
+        </div>
+    {% endfor %}
+    </div>
+
+    <div style="text-align: center;">
+        <button class="contact-button">Contact Us</button> 
+    </div>
+    
+    <div class="footer">
+        <p>Copyright 2026, Duck Careers. All rights reserved.</p>   
+    </div>
+</div>
+{%endblock%}
