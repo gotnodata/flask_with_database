@@ -7,30 +7,280 @@
 <div class="main-content">
     <h1>Duck Careers!</h1>
     
+    <!-- Search Bar Section -->
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for jobs, companies, or locations..." class="search-input">
+            <button class="search-button" onclick="searchJobs()">
+                <span>🔍</span>
+            </button>
+        </div>
+        <div class="filter-tags">
+            <span class="filter-tag" onclick="filterByTag('all')">All Jobs</span>
+            <span class="filter-tag" onclick="filterByTag('tech')">Technology</span>
+            <span class="filter-tag" onclick="filterByTag('marketing')">Marketing</span>
+            <span class="filter-tag" onclick="filterByTag('design')">Design</span>
+        </div>
+    </div>
+    
     <div class="about-section">
         <h2>About Duck Careers</h2>
         <p>Duck Careers is your premier destination for navigating the job market with confidence and ease. Whether you're a recent graduate taking your first professional steps or an experienced professional seeking new opportunities, our platform connects you with thousands of employers across diverse industries. We offer personalized job recommendations, comprehensive career resources, and expert guidance to help you land your dream role. Our intuitive search tools and advanced filtering options make finding the perfect position simple and efficient. Join our community of ambitious professionals and let Duck Careers guide you toward a fulfilling and successful career path. Your next opportunity awaits.</p>
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number" data-target="1000">0</span>
+                <span class="stat-label">Active Jobs</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="500">0</span>
+                <span class="stat-label">Companies</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="50">0</span>
+                <span class="stat-label">Cities</span>
+            </div>
+        </div>
     </div>
 
     <h2 class="text-center">Open Positions</h2>
 
-    <div class="container">
+    <div class="container" id="jobContainer">
     {% for job in jobs %}
-        <div class="job-card">
-            <h3>{{ job.title }}</h3>
-            <p>{{ job.company }}</p>
-            <p><strong>Location:</strong> {{ job.location }}</p>
-            <p><strong>Salary:</strong> {{ job.salary }}</p>
+        <div class="job-card" data-category="{{ job.title|lower }}" data-company="{{ job.company|lower }}" data-location="{{ job.location|lower }}">
+            <div class="job-header">
+                <h3>{{ job.title }}</h3>
+                <span class="save-job" onclick="toggleSave(this)" title="Save job">☆</span>
+            </div>
+            <p class="company-name">{{ job.company }}</p>
+            <p class="job-location"><strong>📍 Location:</strong> {{ job.location }}</p>
+            <p class="job-salary"><strong>💰 Salary:</strong> {{ job.salary }}</p>
+            <div class="job-actions">
+                <button class="apply-button" onclick="applyForJob('{{ job.title }}', '{{ job.company }}')">Apply Now</button>
+                <button class="details-button" onclick="showJobDetails('{{ job.title }}', '{{ job.company }}', '{{ job.location }}', '{{ job.salary }}')">View Details</button>
+            </div>
         </div>
     {% endfor %}
     </div>
 
     <div style="text-align: center;">
-        <button class="contact-button">Contact Us</button> 
+        <button class="contact-button" onclick="showContactForm()">Contact Us</button> 
     </div>
     
     <div class="footer">
         <p>Copyright 2026, Duck Careers. All rights reserved.</p>   
     </div>
 </div>
+
+<!-- Modal for Job Details -->
+<div id="jobModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Job Details</h2>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- Modal for Contact Form -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeContactModal()">&times;</span>
+        <h2>Contact Us</h2>
+        <form class="contact-form" onsubmit="submitContactForm(event)">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit" class="submit-button">Send Message</button>
+        </form>
+    </div>
+</div>
+
+<!-- Notification Toast -->
+<div id="notification" class="notification"></div>
+
+<script>
+// Search functionality
+function searchJobs() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const jobCards = document.querySelectorAll('.job-card');
+    
+    jobCards.forEach(card => {
+        const title = card.dataset.category;
+        const company = card.dataset.company;
+        const location = card.dataset.location;
+        
+        if (title.includes(searchTerm) || company.includes(searchTerm) || location.includes(searchTerm)) {
+            card.style.display = 'block';
+            card.style.animation = 'fadeIn 0.5s ease-in';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Filter by tags
+function filterByTag(category) {
+    const jobCards = document.querySelectorAll('.job-card');
+    const tags = document.querySelectorAll('.filter-tag');
+    
+    // Update active tag
+    tags.forEach(tag => tag.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    jobCards.forEach(card => {
+        if (category === 'all') {
+            card.style.display = 'block';
+            card.style.animation = 'fadeIn 0.5s ease-in';
+        } else {
+            const title = card.dataset.category;
+            if (title.includes(category)) {
+                card.style.display = 'block';
+                card.style.animation = 'fadeIn 0.5s ease-in';
+            } else {
+                card.style.display = 'none';
+            }
+        }
+    });
+}
+
+// Save job functionality
+function toggleSave(element) {
+    if (element.textContent === '☆') {
+        element.textContent = '★';
+        element.style.color = '#4A90E2';
+        showNotification('Job saved to your favorites! ⭐');
+    } else {
+        element.textContent = '☆';
+        element.style.color = '#666';
+        showNotification('Job removed from favorites');
+    }
+}
+
+// Apply for job
+function applyForJob(title, company) {
+    showNotification(`Application submitted for ${title} at ${company}! 🎉`);
+}
+
+// Show job details
+function showJobDetails(title, company, location, salary) {
+    const modal = document.getElementById('jobModal');
+    const modalBody = document.getElementById('modalBody');
+    
+    modalBody.innerHTML = `
+        <div class="job-detail-item">
+            <strong>Position:</strong> ${title}
+        </div>
+        <div class="job-detail-item">
+            <strong>Company:</strong> ${company}
+        </div>
+        <div class="job-detail-item">
+            <strong>Location:</strong> ${location}
+        </div>
+        <div class="job-detail-item">
+            <strong>Salary:</strong> ${salary}
+        </div>
+        <div class="job-detail-item">
+            <strong>Description:</strong> We are looking for a talented ${title} to join our team at ${company}. This is an exciting opportunity to work with cutting-edge technology and make a real impact in the industry.
+        </div>
+        <div class="job-detail-item">
+            <strong>Requirements:</strong> Bachelor's degree in relevant field, 3+ years experience, strong communication skills.
+        </div>
+        <button class="apply-button" onclick="applyForJob('${title}', '${company}')">Apply Now</button>
+    `;
+    
+    modal.style.display = 'block';
+}
+
+// Show contact form
+function showContactForm() {
+    document.getElementById('contactModal').style.display = 'block';
+}
+
+// Close modals
+function closeModal() {
+    document.getElementById('jobModal').style.display = 'none';
+}
+
+function closeContactModal() {
+    document.getElementById('contactModal').style.display = 'none';
+}
+
+// Submit contact form
+function submitContactForm(event) {
+    event.preventDefault();
+    showNotification('Message sent successfully! We\'ll get back to you soon. 📧');
+    closeContactModal();
+    event.target.reset();
+}
+
+// Show notification
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+    notification.style.animation = 'slideIn 0.3s ease-out';
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 300);
+    }, 3000);
+}
+
+// Animated counter for statistics
+function animateCounters() {
+    const counters = document.querySelectorAll('.stat-number');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.dataset.target);
+        const increment = target / 50;
+        let current = 0;
+        
+        const updateCounter = () => {
+            current += increment;
+            if (current < target) {
+                counter.textContent = Math.ceil(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = target + '+';
+            }
+        };
+        
+        updateCounter();
+    });
+}
+
+// Search on input
+document.getElementById('searchInput').addEventListener('input', searchJobs);
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    const jobModal = document.getElementById('jobModal');
+    const contactModal = document.getElementById('contactModal');
+    
+    if (event.target === jobModal) {
+        closeModal();
+    }
+    if (event.target === contactModal) {
+        closeContactModal();
+    }
+}
+
+// Initialize animations on page load
+window.addEventListener('load', () => {
+    animateCounters();
+});
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeModal();
+        closeContactModal();
+    }
+    if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+    }
+});
+</script>
 {%endblock%}
