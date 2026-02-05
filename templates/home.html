@@ -7,39 +7,9 @@
 <div class="main-content">
     <h1>Duck Careers!</h1>
     
-    <!-- Search Bar Section -->
-    <div class="search-section">
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search for jobs, companies, or locations..." class="search-input">
-            <button class="search-button" onclick="searchJobs()">
-                <span>🔍</span>
-            </button>
-        </div>
-        <div class="filter-tags">
-            <span class="filter-tag" onclick="filterByTag('all')">All Jobs</span>
-            <span class="filter-tag" onclick="filterByTag('tech')">Technology</span>
-            <span class="filter-tag" onclick="filterByTag('marketing')">Marketing</span>
-            <span class="filter-tag" onclick="filterByTag('design')">Design</span>
-        </div>
-    </div>
-    
     <div class="about-section">
         <h2>About Duck Careers</h2>
         <p>Duck Careers is your premier destination for navigating the job market with confidence and ease. Whether you're a recent graduate taking your first professional steps or an experienced professional seeking new opportunities, our platform connects you with thousands of employers across diverse industries. We offer personalized job recommendations, comprehensive career resources, and expert guidance to help you land your dream role. Our intuitive search tools and advanced filtering options make finding the perfect position simple and efficient. Join our community of ambitious professionals and let Duck Careers guide you toward a fulfilling and successful career path. Your next opportunity awaits.</p>
-        <div class="stats-container">
-            <div class="stat-item">
-                <span class="stat-number" data-target="1000">0</span>
-                <span class="stat-label">Active Jobs</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" data-target="500">0</span>
-                <span class="stat-label">Companies</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" data-target="50">0</span>
-                <span class="stat-label">Cities</span>
-            </div>
-        </div>
     </div>
 
     <h2 class="text-center">Open Positions</h2>
@@ -55,7 +25,7 @@
             <p class="job-location"><strong>📍 Location:</strong> {{ job.location }}</p>
             <p class="job-salary"><strong>💰 Salary:</strong> {{ job.salary }}</p>
             <div class="job-actions">
-                <button class="apply-button" onclick="applyForJob('{{ job.title }}', '{{ job.company }}')">Apply Now</button>
+                <button class="apply-button" onclick="goToApplication({{ job.id }})">Apply Now</button>
                 <button class="details-button" onclick="showJobDetails('{{ job.title }}', '{{ job.company }}', '{{ job.location }}', '{{ job.salary }}')">View Details</button>
             </div>
         </div>
@@ -98,48 +68,9 @@
 <div id="notification" class="notification"></div>
 
 <script>
-// Search functionality
-function searchJobs() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const jobCards = document.querySelectorAll('.job-card');
-    
-    jobCards.forEach(card => {
-        const title = card.dataset.category;
-        const company = card.dataset.company;
-        const location = card.dataset.location;
-        
-        if (title.includes(searchTerm) || company.includes(searchTerm) || location.includes(searchTerm)) {
-            card.style.display = 'block';
-            card.style.animation = 'fadeIn 0.5s ease-in';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-
-// Filter by tags
-function filterByTag(category) {
-    const jobCards = document.querySelectorAll('.job-card');
-    const tags = document.querySelectorAll('.filter-tag');
-    
-    // Update active tag
-    tags.forEach(tag => tag.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    jobCards.forEach(card => {
-        if (category === 'all') {
-            card.style.display = 'block';
-            card.style.animation = 'fadeIn 0.5s ease-in';
-        } else {
-            const title = card.dataset.category;
-            if (title.includes(category)) {
-                card.style.display = 'block';
-                card.style.animation = 'fadeIn 0.5s ease-in';
-            } else {
-                card.style.display = 'none';
-            }
-        }
-    });
+// Go to application page
+function goToApplication(jobId) {
+    window.location.href = `/apply/${jobId}`;
 }
 
 // Save job functionality
@@ -250,9 +181,6 @@ function animateCounters() {
     });
 }
 
-// Search on input
-document.getElementById('searchInput').addEventListener('input', searchJobs);
-
 // Close modals when clicking outside
 window.onclick = function(event) {
     const jobModal = document.getElementById('jobModal');
@@ -276,10 +204,6 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeModal();
         closeContactModal();
-    }
-    if (e.ctrlKey && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('searchInput').focus();
     }
 });
 </script>

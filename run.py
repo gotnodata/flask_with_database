@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -44,10 +44,17 @@ JOBS = [
 def home():
     return render_template('home.html', jobs=JOBS)
 
-@app.route('/api/jobs') #json endpoint. The /api here signifies json will be returned.
+@app.route('/apply/<int:job_id>')
+def apply(job_id):
+    job = next((job for job in JOBS if job['id'] == job_id), None)
+    if job is None:
+        return "Job not found", 404
+    return render_template('apply.html', job=job)
+
+@app.route('/api/jobs')
 def list_jobs():
     return jsonify(JOBS) 
 
-
 if __name__ == '__main__':
     app.run(debug=True)
+
