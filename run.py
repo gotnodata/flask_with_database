@@ -8,12 +8,19 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:{os.getenv('DB_PASSWORD')}@localhost:3306/job_application"
+# Build database URL from environment variables
+db_host = os.getenv('DB_HOST', 'localhost')
+db_port = os.getenv('DB_PORT', '3306')
+db_name = os.getenv('DB_NAME', 'job_application')
+db_user = os.getenv('DB_USER', 'root')
+db_password = os.getenv('DB_PASSWORD', '')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'password'
+app.secret_key = os.getenv('SECRET_KEY', 'password')  # Use env variable for security
 
 db = SQLAlchemy(app)
+
 
 # Database Models
 class JobApplication(db.Model):
