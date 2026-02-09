@@ -19,18 +19,22 @@
             <h2>Complete Your Application</h2>
             <p class="form-intro">Fill out the form below to apply for this position. All fields marked with * are required.</p>
             
-            <form class="application-form" onsubmit="submitApplication(event)">
+            <form class="application-form" action="/submit-application" method="POST" enctype="multipart/form-data" onsubmit="submitApplication(event)">
+                <!-- Hidden fields for job information -->
+                <input type="hidden" name="job_id" value="{{ job.id }}">
+                <input type="hidden" name="job_title" value="{{ job.title }}">
+                <input type="hidden" name="company" value="{{ job.company }}">
                 <!-- Personal Information -->
                 <div class="form-section">
                     <h3>Personal Information</h3>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="firstName">First Name *</label>
-                            <input type="text" id="firstName" name="firstName" required>
+                            <input type="text" id="firstName" name="first_name" required>
                         </div>
                         <div class="form-group">
                             <label for="lastName">Last Name *</label>
-                            <input type="text" id="lastName" name="lastName" required>
+                            <input type="text" id="lastName" name="last_name" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -74,11 +78,11 @@
                     </div>
                     <div class="form-group">
                         <label for="currentJob">Current Job Title</label>
-                        <input type="text" id="currentJob" name="currentJob">
+                        <input type="text" id="currentJob" name="current_job">
                     </div>
                     <div class="form-group">
                         <label for="currentCompany">Current Company</label>
-                        <input type="text" id="currentCompany" name="currentCompany">
+                        <input type="text" id="currentCompany" name="current_job">
                     </div>
                 </div>
                 
@@ -87,7 +91,19 @@
                     <h3>Additional Information</h3>
                     <div class="form-group">
                         <label for="coverLetter">Cover Letter *</label>
-                        <textarea id="coverLetter" name="coverLetter" rows="6" required placeholder="Tell us why you're interested in this position and why you'd be a great fit..."></textarea>
+                        <textarea id="coverLetter" name="cover_letter" rows="6" required placeholder="Tell us why you're interested in this position and why you'd be a great fit..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio">Portfolio/LinkedIn URL</label>
+                        <input type="url" id="portfolio" name="portfolio_link" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="availability">Available Start Date *</label>
+                        <input type="date" id="availability" name="availability" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salary">Expected Salary</label>
+                        <input type="text" id="salary" name="salary_expectation" placeholder="e.g., $60,000 - $80,000">
                     </div>
                     <div class="form-group">
                         <label for="resume">Resume/CV *</label>
@@ -98,18 +114,6 @@
                                 <span id="file-name">No file selected</span>
                             </label>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="portfolio">Portfolio/LinkedIn URL</label>
-                        <input type="url" id="portfolio" name="portfolio" placeholder="https://...">
-                    </div>
-                    <div class="form-group">
-                        <label for="availability">Available Start Date *</label>
-                        <input type="date" id="availability" name="availability" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="salary">Expected Salary</label>
-                        <input type="text" id="salary" name="salary" placeholder="e.g., $60,000 - $80,000">
                     </div>
                 </div>
                 
@@ -150,7 +154,8 @@ document.getElementById('resume').addEventListener('change', function(e) {
 
 // Submit application
 function submitApplication(event) {
-    event.preventDefault();
+    // Remove preventDefault to let form actually submit to backend
+    // event.preventDefault();
     
     // Show loading state
     const submitButton = event.target.querySelector('.submit-application-button');
@@ -158,18 +163,8 @@ function submitApplication(event) {
     submitButton.textContent = 'Submitting...';
     submitButton.disabled = true;
     
-    // Simulate submission (in real app, this would be an API call)
-    setTimeout(() => {
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
-        
-        // Show success modal
-        document.getElementById('successModal').style.display = 'block';
-        
-        // Reset form
-        event.target.reset();
-        document.getElementById('file-name').textContent = 'No file selected';
-    }, 2000);
+    // Let the form submit naturally to backend
+    // The browser will handle the form submission
 }
 
 // Go back to jobs

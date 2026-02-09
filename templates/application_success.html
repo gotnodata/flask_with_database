@@ -1,0 +1,130 @@
+{%extends "base.html"%}
+{%block title%}Application Submitted Successfully{%endblock%}
+
+{%block content%}
+<img src="/static/banner.jpg" alt="Duck Careers Banner" class="top-banner">
+
+<div class="main-content">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>Application Submitted Successfully!</h1>
+        <p>Thank you for your interest in joining our team. Your application has been received and is currently under review.</p>
+        <p>We'll review your application and get back to you within 3-5 business days.</p>
+        
+        <div class="success-actions">
+            <button class="back-button" onclick="window.location.href='/'">Back to Job Listings</button>
+            <button class="apply-button" onclick="window.location.href='/apply/1'">Apply for Another Position</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-container {
+    max-width: 600px;
+    margin: 4rem auto;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+    backdrop-filter: blur(15px);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.success-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.success-container h1 {
+    color: #2E5C8A;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.success-container p {
+    color: #4a5568;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.success-actions {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.back-button {
+    padding: 1rem 2rem;
+    background: rgba(255,255,255,0.8);
+    color: #2c3e50;
+    border: 2px solid rgba(74, 144, 226, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(74, 144, 226, 0.1);
+    border-color: #4A90E2;
+    transform: translateY(-2px);
+}
+
+.apply-button {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #4A90E2, #2E5C8A);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.apply-button:hover {
+    background: linear-gradient(135deg, #5BA3D5, #3A6B8C);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(74, 144, 226, 0.4);
+}
+
+@media (max-width: 768px) {
+    .success-container {
+        margin: 2rem 1rem;
+        padding: 2rem;
+    }
+    
+    .success-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .back-button,
+    .apply-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+{%endblock%}
