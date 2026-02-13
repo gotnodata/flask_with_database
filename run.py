@@ -111,9 +111,6 @@ def apply(job_id):
 
 @app.route('/submit-application', methods=['POST'])
 def submit_application():
-    print("=== DEBUG: Form Submission Started ===")
-    print(f"Form data received: {dict(request.form)}")
-    print(f"Files received: {dict(request.files)}")
     
     try:
         # Create new application record
